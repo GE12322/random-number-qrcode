@@ -3,16 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Number Generator</title>
+    <title>Secure Form Access</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #formPage { display: none; }
+    </style>
     <script>
-        function generateRandomNumber() {
-            const randomNumber = Math.floor(Math.random() * 1000000); // Adjust range if needed
-            document.getElementById("randomNumber").innerText = "Random Number: " + randomNumber;
+        let generatedNumber;
+        
+        function generateNumber() {
+            generatedNumber = Math.floor(1000 + Math.random() * 9000); // 4-digit random number
+            document.getElementById("randomNumber").innerText = "Generated Number: " + generatedNumber;
+        }
+        
+        function verifyNumber() {
+            const userInput = document.getElementById("userInput").value;
+            if (parseInt(userInput) === generatedNumber) {
+                document.getElementById("verificationPage").style.display = "none";
+                document.getElementById("formPage").style.display = "block";
+                document.getElementById("dateTime").value = new Date().toLocaleString();
+            } else {
+                alert("Incorrect number. Please try again.");
+            }
+        }
+        
+        function submitForm() {
+            const formData = {
+                name: document.getElementById("name").value,
+                location: document.getElementById("location").value,
+                dateTime: document.getElementById("dateTime").value,
+                participants: document.getElementById("participants").value
+            };
+            
+            localStorage.setItem("submittedData", JSON.stringify(formData));
+            alert("Form submitted successfully!");
         }
     </script>
 </head>
-<body onload="generateRandomNumber()">
-    <h1 id="randomNumber"></h1>
-    <button onclick="generateRandomNumber()">Generate Again</button>
+<body onload="generateNumber()">
+    <div id="verificationPage">
+        <h1>Verify to Proceed</h1>
+        <p id="randomNumber"></p>
+        <input type="number" id="userInput" placeholder="Enter the number" required>
+        <button onclick="verifyNumber()">Verify</button>
+    </div>
+    
+    <div id="formPage">
+        <h1>Fill Out the Form</h1>
+        <form onsubmit="event.preventDefault(); submitForm();">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required><br><br>
+            
+            <label for="location">Community Location:</label>
+            <input type="text" id="location" required><br><br>
+            
+            <label for="dateTime">Date & Time:</label>
+            <input type="text" id="dateTime" readonly><br><br>
+            
+            <label for="participants">Number of Participants:</label>
+            <input type="number" id="participants" required><br><br>
+            
+            <button type="submit">Submit</button>
+        </form>
+    </div>
 </body>
 </html>
